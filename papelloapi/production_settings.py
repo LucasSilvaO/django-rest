@@ -1,7 +1,8 @@
 """
-This settings file is for local development, it will automatically be used
-when you are in your local environment.
+This settings file is for production, it will automatically be used
+when you are in production environment.
 """
+
 
 import os
 from pathlib import Path
@@ -13,13 +14,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-3l(vm@zmjb5rp)pcs@f4ht_73ex3k45h(8xq_c(_)9ww$old8s"
+
+# SECURITY WARNING: make sure to change this in your railway variables from the default one
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
+
+# Comment out the following line and place your railway URL, and your production URL in the array.
+# CSRF_TRUSTED_ORIGINS = ["*"]
 
 
 # Application definition
@@ -31,8 +36,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "corsheaders",
+    'django_q',
+    'rest_framework',
+    'pedidos',
+    'drf_yasg',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -73,8 +81,12 @@ WSGI_APPLICATION = "main.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.environ["PGDATABASE"],
+        "USER": os.environ["PGUSER"],
+        "PASSWORD": os.environ["PGPASSWORD"],
+        "HOST": os.environ["PGHOST"],
+        "PORT": os.environ["PGPORT"],
     }
 }
 
@@ -101,9 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "pt-br"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -121,3 +133,24 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+     'DEFAULT_AUTHENTICATION_CLASSES': (
+         'rest_framework.authentication.BasicAuthentication',
+     ),
+ }
+
+Q_CLUSTER = {
+    'name': 'DjangORM',
+    'workers': 4,
+    'timeout': 90,
+    'retry': 120,
+    'queue_limit': 50,
+    'bulk': 10,
+    'orm': 'default'
+}
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000"
+]
