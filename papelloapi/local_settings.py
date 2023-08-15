@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # SECURITY WARNING: make sure to change this in your railway variables from the default one
-SECRET_KEY = os.environ["SECRET_KEY"]
+SECRET_KEY = "123456789"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
